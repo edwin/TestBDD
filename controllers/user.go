@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	_ "github.com/astaxie/beego/session"
 	"testbdd/models"
 )
 
@@ -19,9 +20,12 @@ func (u *UserController) Login() {
 	password := u.GetString("password")
 	if models.Login(username, password) {
 		u.Data["json"] = "login success"
+		u.Ctx.ResponseWriter.WriteHeader(200)
 
 		session := u.StartSession()
-		session.Set("username", username)
+		if session != nil {
+			session.Set("username", username)
+		}
 	} else {
 		u.Data["json"] = "user not exist"
 		u.Ctx.ResponseWriter.WriteHeader(404)
